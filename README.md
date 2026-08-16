@@ -1,203 +1,341 @@
-# Delivery Hub
+<h1 align="center">Delivery Hub</h1>
 
-Tema WordPress open-source de delivery inspirado em **CardapioWeb** e **Anota Ai**. Cardápio digital, carrinho reativo, checkout com envio para WhatsApp e PDV Kanban no admin.
+<p align="center">
+  <strong>Alternativa gratuita e open-source ao Anota Ai e CardapioWeb.</strong><br>
+  Cardápio digital, carrinho, checkout via WhatsApp e PDV Kanban — direto no seu WordPress.
+</p>
 
-## Stack
+<p align="center">
+  <a href="https://github.com/eusougabrielgadelha/delivery-free/releases"><img src="https://img.shields.io/github/v/release/eusougabrielgadelha/delivery-free?color=EA1D2C&label=vers%C3%A3o&style=flat-square" alt="Versão"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-PolyForm%20NC%201.0.0-blue?style=flat-square" alt="License"></a>
+  <a href="https://wordpress.org/download/"><img src="https://img.shields.io/badge/WordPress-6.0%2B-21759B?style=flat-square&logo=wordpress&logoColor=white" alt="WordPress"></a>
+  <a href="https://www.php.net/"><img src="https://img.shields.io/badge/PHP-8.0%2B-777BB4?style=flat-square&logo=php&logoColor=white" alt="PHP"></a>
+  <a href="https://github.com/eusougabrielgadelha/delivery-free/stargazers"><img src="https://img.shields.io/github/stars/eusougabrielgadelha/delivery-free?style=flat-square&color=yellow" alt="Stars"></a>
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-bem%20vindos-brightgreen?style=flat-square" alt="PRs Welcome"></a>
+</p>
 
-- WordPress 6+ / PHP 8+
-- Alpine.js (via CDN) para reatividade do frontend
-- SortableJS (via CDN) para drag-drop do Kanban admin
-- CSS puro (sem build step)
-- ViaCEP (autocomplete de endereço grátis)
+<p align="center">
+  <a href="#-por-que-existe">Por que existe</a> ·
+  <a href="#-funcionalidades">Funcionalidades</a> ·
+  <a href="#-instalação-em-10-minutos">Instalação</a> ·
+  <a href="#-arquitetura">Arquitetura</a> ·
+  <a href="#-roadmap">Roadmap</a> ·
+  <a href="#-contribuindo">Contribuir</a>
+</p>
 
-## Instalação rápida
+---
 
-1. Copie a pasta `delivery-hub/` para `wp-content/themes/` da sua instalação WordPress
-2. Ative o tema em **Aparência → Temas**
-3. Menu lateral → **Cardápio → Popular exemplos** → clique "Popular agora" (12 itens de teste)
-4. Menu **Config. da Loja** → preencha WhatsApp com DDI (`5511987654321`), endereço, horário, cor primária, formas de pagamento
-5. Abra `/` do site pra ver o cardápio funcionando
+## 🎯 Por que existe
 
-## Estrutura
+Todo restaurante pequeno no Brasil está pagando **R$ 90-300/mês** para plataformas fechadas de cardápio digital (Anota Ai, CardapioWeb, Menu Dino, Vittude, Cardápio Web, Pedidos Online etc). Ao longo do ano, isso vira **R$ 1.000-3.600 de aluguel de software** que poderia estar comprando insumo.
+
+O Delivery Hub existe pra dar a esse dono de restaurante:
+
+- **Autonomia total** — o cardápio, os pedidos e a lista de clientes ficam no servidor dele
+- **Zero mensalidade eterna** — instala uma vez e roda pra sempre
+- **WhatsApp direto** — sem fee de terceiros no fluxo do pedido
+- **Rodando em hospedagem barata** — PHP compartilhado + MySQL, sem Docker, sem Node
+- **Instalação em 10 minutos** — não precisa contratar desenvolvedor
+
+É um projeto **open-source, gratuito, sem venda**. Comercialização proibida por licença ([PolyForm Noncommercial 1.0.0](LICENSE)). Serviços de instalação, customização e suporte são permitidos.
+
+## 📸 Como se parece
+
+> **Screenshots serão adicionados na próxima release.** Enquanto isso, o design é fortemente inspirado no CardapioWeb (frontend) e no iFood Painel do Parceiro (backend/PDV) — se você conhece qualquer um dos dois, vai se sentir em casa.
+
+## ⚡ Funcionalidades
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 👨‍🍳 Para o restaurante (Admin)
+
+- **PDV Kanban** com 6 status (Novo → Preparando → Pronto → Em rota → Entregue) + drag-drop entre colunas
+- **Timer live por card** com metas configuráveis (SLA). Cards ficam laranja/vermelhos quando estouram
+- **Modo Cozinha** fullscreen otimizado pra TV/tablet montado na cozinha
+- **Loja aberta/fechada automática** por horário do dia + exceções (feriados)
+- **Pausas temporárias** (15/30/60min ou até fim do dia)
+- **Busca em tempo real** por nome, telefone, número do pedido ou item
+- **Filtros** por tipo (entrega/retirada/no local) e período (hoje/ontem/7d)
+- **Editor completo do pedido** — mudar itens, adicionais, taxa, endereço com audit log
+- **Histórico completo** de alterações (quem, o quê, quando)
+- **Ações rápidas por card** — templates WhatsApp, marcar item esgotado, duplicar pedido
+- **Impressão térmica 80mm** — cupom cliente, comanda cozinha, etiqueta pra sacola
+- **Auto-imprimir** ao cair pedido novo
+- **Notificações desktop** com sons distintos (novo/atraso/confirmado)
+- **Cadastro de entregadores** com foto + atribuição no card
+- **Relatórios** — faturamento por hora, top itens, breakdown pagamento, fechamento de caixa, export CSV
+- **3 perfis de acesso** — Cozinha, Atendente, Gerente
+
+</td>
+<td width="50%" valign="top">
+
+### 🛒 Para o cliente
+
+- **Cardápio digital** responsivo com fotos, categorias sticky e busca por scroll
+- **Modal de customização** com adicionais únicos/múltiplos, obrigatórios, extras com preço
+- **Observação por item** ("sem cebola", "bem passado")
+- **Carrinho reativo** com edição de quantidade e remoção
+- **Order bumps** (sugestões antes do checkout)
+- **Autocomplete de endereço via CEP** (ViaCEP, sem key, grátis)
+- **Login por telefone** — endereços salvos, histórico completo
+- **3 formas de recebimento** — Entrega, Retirada, Consumir no local
+- **Pagamento configurável** — PIX, dinheiro (com troco), cartões
+- **Envio automático pro WhatsApp** com pedido formatado
+- **Página de tracking** — timeline em tempo real do status
+- **Confirmação de recebimento pelo cliente**
+- **Página "Meus Pedidos"** com histórico + botão "Pedir de novo"
+
+</td>
+</tr>
+</table>
+
+### Diferenças pras plataformas pagas
+
+| | Delivery Hub | Anota Ai | CardapioWeb |
+|---|---|---|---|
+| Mensalidade | **R$ 0** | R$ 89-249/mês | R$ 97-249/mês |
+| Fee por pedido | **R$ 0** | R$ 0-2 | R$ 0-3 |
+| Dados do cliente | **Você é o dono** | Deles | Deles |
+| Personalização visual | **Total (é WordPress)** | Templates fechados | Templates fechados |
+| Roda offline | Depende só do seu servidor | ❌ | ❌ |
+| Multi-loja | 🔨 Fase futura (Multisite) | ✅ Pago | ✅ Pago |
+| PIX integrado | 🔨 Fase futura | ✅ | ✅ |
+| App próprio na loja | 🔨 PWA na fase futura | ❌ | ❌ |
+
+## 🚀 Instalação em 10 minutos
+
+### Pré-requisitos
+
+- WordPress 6.0+ (com PHP 8.0+ e MySQL 5.7+)
+- Hospedagem qualquer — Hostgator, Hostinger, KingHost, LocaWeb, Bluehost, WPX, Kinsta
+
+### Passo a passo
+
+**1. Baixe a release**
+
+```bash
+# Via Git
+git clone https://github.com/eusougabrielgadelha/delivery-free.git delivery-hub
+
+# Ou baixe o ZIP em Releases e descompacte
+```
+
+**2. Coloque na pasta de temas**
+
+```
+wp-content/
+└── themes/
+    └── delivery-hub/    ← aqui
+```
+
+**3. Ative o tema**
+
+`Aparência → Temas → Delivery Hub → Ativar`
+
+**4. Popule com exemplos** (opcional mas recomendado pra explorar)
+
+`Cardápio → Popular exemplos → Popular agora`
+
+Cria 4 categorias e 12 itens de exemplo (pizzas, hambúrgueres, bebidas, sobremesas) com adicionais configurados.
+
+**5. Configure sua loja**
+
+`Config. da Loja` → preencha:
+- Nome, WhatsApp (com DDI: `5511987654321`)
+- Endereço, horário de funcionamento
+- Cor primária, formas de pagamento
+- Metas de tempo (SLAs)
+
+**6. Abra `/` do seu site**
+
+Cardápio funcionando. Faça um pedido de teste e veja aparecer no PDV.
+
+## 🏗️ Arquitetura
+
+### Stack
+
+- **WordPress 6+** — a base
+- **PHP 8+** — nada de dependências externas via Composer
+- **Alpine.js** (via CDN) — reatividade no frontend público
+- **SortableJS** (via CDN) — drag-drop do Kanban admin
+- **CSS puro moderno** — variáveis CSS, `color-mix()`, sem preprocessador
+- **ViaCEP** — autocomplete de endereço grátis
+- **Canvas API** — gráficos e favicon dinâmico
+
+**Zero bundler. Zero `npm install`. Zero build step.** O tema roda direto após copiar os arquivos.
+
+### Estrutura
 
 ```
 delivery-hub/
-├── style.css                       Header do tema (obrigatório WP)
+├── style.css                       Header do tema (WP)
 ├── functions.php                   Bootstrap + includes
 ├── header.php · footer.php         Wrapper com Alpine + modais
 ├── index.php · front-page.php      Home = cardápio
 ├── inc/
 │   ├── setup.php                   Theme supports, image sizes
-│   ├── cpt.php                     CPTs menu_item, dh_order + status Kanban + flow
+│   ├── cpt.php                     CPTs menu_item, dh_order + status Kanban
 │   ├── meta.php                    Meta boxes: preço, extras, order bump
 │   ├── settings.php                Config da loja + SLA + horários
 │   ├── enqueue.php                 CSS + JS + localize DH global
-│   ├── helpers.php                 money(), dh_log_change(), recalc_totals()
-│   ├── ajax.php                    place_order, order_action, edit_items, toggle_soldout, reorder
-│   ├── whatsapp.php                Monta URL wa.me com mensagem formatada
-│   ├── customer.php                CPT dh_customer, addresses, orders history
+│   ├── helpers.php                 money(), log_change(), recalc_totals()
+│   ├── ajax.php                    place_order, edit_items, toggle_soldout etc
+│   ├── whatsapp.php                Monta URL wa.me formatada
+│   ├── customer.php                CPT dh_customer, addresses, history
+│   ├── delivery.php                CPT dh_delivery + assign no PDV
 │   ├── rest.php                    REST endpoints /dh/v1/*
-│   ├── routes.php                  Rewrite rules /meus-pedidos e /pedido/{id}
-│   ├── metrics.php                 Cálculo de tempo por etapa + médias do dia
+│   ├── routes.php                  Rewrite rules públicas
+│   ├── metrics.php                 Cálculo de tempo por etapa + médias
 │   ├── store-hours.php             Horários + fechado manual + pausa
-│   └── seed.php                    Botão pra popular cardápio de exemplo
+│   ├── roles.php                   dh_cook, dh_attendant, dh_manager
+│   └── seed.php                    Popular cardápio de exemplo
 ├── admin/
-│   ├── pdv.php                     Página Kanban do PDV
-│   ├── order-columns.php           Colunas + metaboxes da edição do pedido
+│   ├── pdv.php                     PDV Kanban
+│   ├── kitchen.php                 Modo Cozinha (fullscreen TV)
+│   ├── reports.php                 Relatórios + fechamento + CSV
+│   ├── order-columns.php           Metaboxes da edição do pedido
 │   ├── order-page.php              Customização visual da tela de pedido
-│   └── menu-item-page.php          Customização visual da tela de item do cardápio
+│   └── menu-item-page.php          Customização visual da tela de item
 ├── templates/
 │   ├── item-modal.php              Modal ao clicar num item
 │   ├── cart-drawer.php             Drawer do carrinho + order bumps
-│   ├── checkout-modal.php          Formulário de finalização com CEP + login
+│   ├── checkout-modal.php          Checkout com CEP + login por telefone
 │   ├── success-modal.php           Confirmação após envio
-│   ├── my-orders.php               Página /meus-pedidos
-│   └── order-tracking.php          Página /pedido/{id} com timeline
+│   ├── my-orders.php               /meus-pedidos (área do cliente)
+│   ├── order-tracking.php          /pedido/{id} (tracking em tempo real)
+│   └── print-order.php             /print/{id}/{tipo} (impressão térmica)
 └── assets/
     ├── css/theme.css               CSS do frontend
     ├── css/admin.css               CSS do admin/PDV
     ├── js/app.js                   Alpine store (cardápio + carrinho + checkout)
-    └── js/pdv.js                   Kanban interativo (drag-drop, timers, filtros, ações)
+    └── js/pdv.js                   Kanban interativo (drag, timers, filtros, ações)
 ```
 
-## Funcionalidades entregues
+### Modelo de dados
 
-### Cardápio (cliente)
-- ✅ Header com capa/logo/nome/horário/taxa
-- ✅ Categorias sticky com scroll automático
-- ✅ Cards de item com foto, descrição, preço + promo
-- ✅ Modal de customização (adicionais única/múltipla, obrigatórios, extras com preço)
-- ✅ Observação por item
-- ✅ Item esgotado (bloqueia click)
-- ✅ Carrinho drawer com editar quantidade / remover
-- ✅ Order bumps (sugestões antes do checkout)
-- ✅ Checkout: nome, WhatsApp com máscara BR, 3 tipos (entrega/retirada/no local)
-- ✅ **Autocomplete de endereço via CEP** (ViaCEP, sem key)
-- ✅ Endereço estruturado (rua, número, bairro, complemento, referência, cidade, UF)
-- ✅ Formas de pagamento configuráveis + troco pra dinheiro
-- ✅ Envio automático pra WhatsApp com pedido formatado
-- ✅ Bloqueio de checkout quando loja fechada
+- **`menu_item`** — CPT dos itens do cardápio. Meta `_dh_price`, `_dh_promo_price`, `_dh_extras` (grupos com opções JSON), `_dh_is_bump`, `_dh_soldout`. Taxonomia `menu_category`
+- **`dh_order`** — CPT dos pedidos. Meta `_dh_customer` (nome, telefone, endereço estruturado), `_dh_items`, `_dh_subtotal`, `_dh_delivery_fee`, `_dh_total`, `_dh_delivery_id`, `_dh_status_history`, `_dh_change_log`
+- **`dh_customer`** — CPT dos clientes, indexado por `post_name` = telefone. Meta `_dh_addresses` (array de endereços salvos)
+- **`dh_delivery`** — CPT dos entregadores. Meta `_dh_deliv_phone`, `_dh_deliv_active`
+- **Status customizados** — `dh-novo`, `dh-preparando`, `dh-pronto`, `dh-rota`, `dh-entregue`, `dh-cancelado`
+- **Options** — `dh_settings` (config da loja), `dh_store_state` (fechado/pausado)
 
-### Área do cliente
-- ✅ Página `/meus-pedidos` com "login" via telefone
-- ✅ Avatar circular colorido gerado pelas iniciais (cor consistente por telefone)
-- ✅ Cards de pedidos em andamento com mini-timeline
-- ✅ Histórico de pedidos com "Pedir de novo"
-- ✅ Página `/pedido/{id}` com tracking em tempo real
-- ✅ Timeline horizontal com ícones SVG por etapa (checkmark, chef, caixa, moto, check-duplo)
-- ✅ Card de status hero com cor dinâmica
-- ✅ Poll de 15s pra atualizar status sem reload
-- ✅ Botão de confirmação do recebimento pelo cliente
-- ✅ Cards de endereço, itens, pagamento, observação
-- ✅ Botão WhatsApp da loja
+### Regras de negócio críticas
 
-### Loja (admin)
-- ✅ **PDV Kanban 6 colunas** (Novo → Preparando → Pronto → Em rota → Entregue → Cancelado)
-- ✅ Drag-drop entre colunas
-- ✅ Auto-refresh a cada 15s
-- ✅ Som ao cair pedido novo
-- ✅ Badge no menu com contagem de "Novo"
-- ✅ **Timer live por card** com barra de progresso colorida (verde/amarelo/vermelho)
-- ✅ **Métricas do dia** — pedidos, faturamento, ticket médio, em atraso
-- ✅ **SLAs configuráveis** com médias reais por etapa (aceite/preparo/expedição/entrega/retirada/ciclo)
-- ✅ **Horário de funcionamento** por dia da semana com múltiplas faixas
-- ✅ Exceções (feriados e datas especiais)
-- ✅ Fechamento manual + pausas temporárias (15/30/60min ou até fim do dia)
-- ✅ Reabertura força override quando fora do horário
-- ✅ **Busca em tempo real** (nome/telefone/#/item, normaliza acento)
-- ✅ Filtros por tipo (entrega/retirada/no local) + período (hoje/ontem/7d)
-- ✅ Ordenação (mais antigo/recente, maior/menor valor)
-- ✅ Modo compacto
-- ✅ Filtros persistidos em localStorage
-- ✅ **Ações rápidas no card** (popover):
-  - 5 templates de WhatsApp (atraso, saiu, pronto, endereço, custom)
-  - Marcar item esgotado direto do card (afeta cardápio)
-  - Duplicar pedido em 1 clique
-- ✅ Toast de confirmação
-- ✅ Edição completa do pedido (itens, adicionais, quantidade, taxa, observação, cliente)
-- ✅ **Timeline horizontal** de status por pedido
-- ✅ **Audit log** completo (quem, o quê, quando) com badges coloridas
-- ✅ Combobox de busca (com autocomplete) pra adicionar item
-- ✅ Botões estilizados avançar/voltar/cancelar por pedido
-- ✅ CPT `dh_customer` com endereços salvos e histórico
-- ✅ Roteamento REST `/wp-json/dh/v1/*` (customer, orders, order, menu-item)
+- **Prioridade do status da loja**: `manual_closed` > `paused_until` > `manual_open_until` > exceção do dia > horário do dia da semana
+- **Timezone**: sempre `time()` + `wp_date()`, nunca `current_time( 'timestamp' )` (bugado no WP)
+- **Dia da semana**: `wp_date( 'N' )` (ISO 1-7) — `wp_date( 'D' )` retorna em português (`sáb`, `dom`) e quebra lookups
+- **Recálculo de totais**: sempre server-side em `dh_recalc_order_totals()` — cliente nunca dita preço
+- **Nonces por-pedido**: `dh_order_edit_{ID}`, `dh_order_action_{ID}` — não dá pra reusar de outro pedido
+- **Pedidos entregues/cancelados**: bloqueados pra edição e avanço
 
-### Frontend UX
-- ✅ Layout responsivo mobile-first
-- ✅ Máscara de telefone/CEP em tempo real
-- ✅ Skeleton loader
-- ✅ Persistência localStorage (carrinho, checkout, dados do cliente)
+## 🗺️ Roadmap
 
-## Roadmap — fases entregues
+### ✅ Entregue (v0.2.0)
 
-### ✅ Fase 5 — Entregadores
-- CPT `dh_delivery` (cadastro completo com foto, telefone com máscara, ativo/inativo)
-- Modal de escolha ao arrastar pra "Em rota"
-- Contagem por entregador no header do Kanban
-- Nome + foto visíveis no tracking do cliente
-- Audit log grava atribuição
+- [x] Cardápio digital com carrinho e checkout via WhatsApp
+- [x] Autocomplete de endereço via ViaCEP
+- [x] Login por telefone com endereços salvos e histórico
+- [x] PDV Kanban com drag-drop, timer live, SLAs configuráveis
+- [x] Loja aberta/fechada com horário automático e exceções
+- [x] Busca, filtros, ordenação e modo compacto
+- [x] Editor completo do pedido com audit log
+- [x] Impressão térmica (cliente, cozinha, etiqueta)
+- [x] Modo Cozinha fullscreen pra TV
+- [x] Notificações desktop com sons distintos
+- [x] Cadastro de entregadores com atribuição
+- [x] Relatórios (faturamento/hora, top itens, fechamento de caixa, CSV)
+- [x] 3 perfis de acesso (cozinha, atendente, gerente)
 
-### ✅ Fase 6 — Notificações e alertas
-- Notification API com permissão explícita
-- 3 sons distintos (novo agudo, atraso grave, confirmado suave)
-- Badge no title da aba piscando `(N) PDV`
-- Favicon dinâmico gerado via canvas com dot vermelho
-- Alertas: pedido novo, atraso SLA, cliente confirmou
+### 🔨 Próximas fases (contribuições bem-vindas)
 
-### ✅ Fase 7 — Impressão térmica
-- Rota `/print/{id}/{tipo}` — cliente, cozinha, etiqueta
-- CSS 80mm otimizado com preview + botão imprimir
-- Toggle "Auto-imprimir" persistido no device
-- Ao cair pedido novo, abre popups de Cliente + Cozinha
-- Botões no popover do card + na sidebar de edição do pedido
+- [ ] **Pagamento PIX integrado** (Mercado Pago / Gerencianet / PagBank)
+- [ ] **Cupons de desconto** — % ou valor fixo, com validade
+- [ ] **Programa de fidelidade** — pontos por pedido, resgate
+- [ ] **Multi-loja** via WP Multisite
+- [ ] **PWA instalável** com service worker offline
+- [ ] **App nativo** (React Native / Flutter) — read-only pro cliente
+- [ ] **Chatbot no WhatsApp** que aceita pedido
+- [ ] **OTP via SMS** pro login por telefone (mais seguro)
+- [ ] **Integração iFood / Rappi** — importar pedidos no mesmo PDV
+- [ ] **Impressão via API PrintNode** — dispensa driver local
+- [ ] **Analytics 30/90 dias** — LTV, cohort, churn
+- [ ] **Suporte multi-idioma** (i18n com `.po/.mo`)
+- [ ] **Traduções** — inglês, espanhol LATAM, francês
 
-### ✅ Fase 8 — Modo Cozinha (TV fullscreen)
-- Rota `/wp-admin/admin.php?page=dh-kitchen&fs=1`
-- 3 colunas gigantes (Novo, Preparando, Pronto) fundo escuro pra TV
-- Cards com fonte 20px+, timer live, obs em amarelo destacado
-- Botão grande de avanço por card (INICIAR PREPARO / PRONTO)
-- Relógio no header + auto-refresh 10s
-- Fullscreen esconde admin bar
+Veja o [ROADMAP completo](CHANGELOG.md#unreleased) e [issues abertas](https://github.com/eusougabrielgadelha/delivery-free/issues).
 
-### ✅ Fase 9 — Insights, comparativos e fechamento
-- Página **Relatórios** no menu lateral
-- 4 cards comparativos com delta % vs. ontem (faturamento, pedidos, ticket, atraso)
-- Gráfico de barras faturamento por hora (canvas puro)
-- Breakdown de pagamento com barras percentuais
-- Top 8 itens mais vendidos ranqueados
-- Fechamento de caixa (dinheiro esperado vs contado)
-- Export CSV do dia com BOM UTF-8 pra Excel
+## 🤝 Contribuindo
 
-### ✅ Fase 10 — Multi-atendente e roles
-- 3 roles WP: `dh_cook`, `dh_attendant`, `dh_manager`
-- **Cozinha**: só vê Modo Cozinha, redirect automático no login
-- **Atendente**: PDV + pedidos + entregadores + clientes (sem cardápio/settings/relatórios)
-- **Gerente**: tudo exceto settings core do WP
-- Log de quem fez cada ação já vinha do audit log (`user_id`)
-- Admin notice em Config. da Loja pra criar novos usuários
+Contribuições de qualquer tipo são bem-vindas — código, docs, tradução, design, teste, divulgação. Existe um **padrão único** de contribuição documentado em [CONTRIBUTING.md](CONTRIBUTING.md).
 
-### 💡 Ideias futuras (não priorizadas)
-- Pagamento PIX integrado (Mercado Pago / Gerencianet)
-- Cupons de desconto
-- Programa de fidelidade
-- Multi-loja (WP Multisite)
-- App PWA instalável
-- Chatbot no WhatsApp
-- OTP via SMS (segurança do login por telefone)
+**Onde começar:**
 
-## Regras de negócio importantes
+- 🐛 [Reportar bug](https://github.com/eusougabrielgadelha/delivery-free/issues/new?template=bug_report.yml)
+- 💡 [Sugerir feature](https://github.com/eusougabrielgadelha/delivery-free/issues/new?template=feature_request.yml)
+- ❓ [Fazer pergunta](https://github.com/eusougabrielgadelha/delivery-free/discussions)
+- 🌍 Traduzir pra inglês/espanhol
+- 📚 Escrever tutorial em vídeo
 
-- **Prioridade do status da loja:** manual_closed > paused_until > manual_open_until > exceção do dia > horário do dia
-- **Timezone:** sempre usar `time()` + `wp_date()` — `current_time('timestamp')` é bugado no WP e retorna offset local dobrado
-- **Dia da semana:** usar `wp_date('N')` (ISO 1-7), não `wp_date('D')` que retorna português (`sáb`, `dom`) e quebra lookup
-- **Pedidos entregues/cancelados:** não podem ser editados nem avançados
-- **Recálculo de totais:** sempre server-side após edição (fonte da verdade em `_dh_items` + `_dh_delivery_fee`)
-- **Nonces por-pedido:** ações de edição usam `dh_order_edit_{ID}` e `dh_order_action_{ID}`
+## ⚖️ Licença
 
-## Contribuindo
+**PolyForm Noncommercial License 1.0.0** — veja [LICENSE](LICENSE).
 
-Este projeto foi construído em uma série de fases atômicas via [Claude Code](https://claude.com/claude-code). Cada fase deixa o produto operável — dá pra parar em qualquer ponto e ter algo útil.
+**Você PODE:**
+- ✅ Baixar, usar, modificar e redistribuir
+- ✅ Instalar em quantos restaurantes/lojas próprias quiser
+- ✅ Cobrar por instalação, customização e suporte técnico
+- ✅ Contribuir e fazer fork
 
-## Licença
+**Você NÃO PODE:**
+- ❌ Vender o Delivery Hub como produto (SaaS pago, licenciamento, revenda)
+- ❌ Cobrar assinatura pra usar o software em si
+- ❌ Reempacotar e vender como serviço
 
-GPL v2 or later
+Uso comercial que envolva venda do software requer licença separada. Entre em contato via [@eusougabrielgadelha](https://github.com/eusougabrielgadelha).
+
+## 👤 Autor
+
+**Gabriel Gadelha** — [@eusougabrielgadelha](https://github.com/eusougabrielgadelha)
+
+- Instagram: [@eusougabrielgadelha](https://www.instagram.com/eusougabrielgadelha)
+- YouTube: [@eusougabrielgadelha](https://www.youtube.com/@eusougabrielgadelha)
+
+Se este projeto te economizou dinheiro ou tempo, considere:
+
+- ⭐ Dar uma estrela no repositório
+- 💬 Contar pra outros donos de restaurante
+- 🤝 [Contribuir](CONTRIBUTING.md) com código, docs ou tradução
+- 💰 [Patrocinar](.github/FUNDING.yml) o desenvolvimento
+
+## 🙏 Créditos e inspirações
+
+- Design do frontend inspirado no [CardapioWeb](https://cardapioweb.com) e [Anota Ai](https://anota.ai)
+- UX do PDV inspirada no iFood Painel do Parceiro
+- Ícones: [Feather Icons](https://feathericons.com) (MIT)
+- Fonte de dados de CEP: [ViaCEP](https://viacep.com.br) (gratuito, sem key)
+
+Delivery Hub **não é afiliado** ao Anota Ai, CardapioWeb, iFood ou qualquer plataforma citada. É um projeto independente construído pra oferecer uma alternativa gratuita a donos de restaurantes que não querem pagar mensalidade.
+
+---
+
+<p align="center">
+  <sub>
+    Feito com 💜 no Brasil por
+    <a href="https://github.com/eusougabrielgadelha"><strong>@eusougabrielgadelha</strong></a>
+    pra dar autonomia digital ao pequeno restaurante brasileiro.
+  </sub>
+</p>
+
+<p align="center">
+  <sub>
+    <strong>Keywords:</strong>
+    anota ai gratuito · cardapioweb gratuito · anota ai alternativa · cardapioweb alternativa ·
+    sistema delivery gratuito · cardápio digital wordpress · pdv delivery open source ·
+    delivery whatsapp brasil · plugin cardápio wordpress · sistema pedido online grátis ·
+    ifood alternativa gratuita · menu dino alternativa · restaurante wordpress theme ·
+    delivery restaurante grátis · pdv kanban restaurante · brasil restaurante software free
+  </sub>
+</p>

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussões
+    url: https://github.com/eusougabrielgadelha/delivery-free/discussions
+    about: Pra conversas gerais, ideias em rascunho ou pedir opinião
+  - name: 📖 Documentação
+    url: https://github.com/eusougabrielgadelha/delivery-free#readme
+    about: README com instalação, features e roadmap

@@ -1,0 +1,22 @@
+name: ❓ Pergunta
+description: Dúvida sobre uso, instalação ou funcionamento
+title: "[Pergunta]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de abrir, dê uma olhada no [README](../README.md) e nas [issues fechadas](https://github.com/eusougabrielgadelha/delivery-free/issues?q=is%3Aissue+is%3Aclosed).
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Sua pergunta
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto
+      description: O que você já tentou? Onde travou?

@@ -1,0 +1,14 @@
+# Cada PR ao repositório automaticamente pede review destes owners.
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Mantenedor principal — todas as áreas
+*                       @eusougabrielgadelha
+
+# Áreas específicas (adicione outros mantenedores conforme entram)
+/inc/                   @eusougabrielgadelha
+/admin/                 @eusougabrielgadelha
+/templates/             @eusougabrielgadelha
+/assets/                @eusougabrielgadelha
+/.github/               @eusougabrielgadelha
+LICENSE                 @eusougabrielgadelha
+CONTRIBUTING.md         @eusougabrielgadelha

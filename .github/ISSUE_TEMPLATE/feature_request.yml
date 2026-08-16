@@ -1,0 +1,52 @@
+name: 💡 Feature request
+description: Sugerir uma nova funcionalidade
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de abrir, verifique se a ideia não está no [ROADMAP](https://github.com/eusougabrielgadelha/delivery-free#roadmap).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Qual problema esta feature resolve?
+      description: Descreva o problema real (não a solução). "Pra quem" e "quando" isso acontece
+      placeholder: |
+        Como dono de restaurante, quando um cliente pede um item que acabou o estoque,
+        eu preciso avisar pelo WhatsApp manualmente. Isso atrasa o pedido em 5-10min.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solução proposta
+      description: Como você imagina que isso deveria funcionar?
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: Outras formas de resolver o mesmo problema
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Escopo estimado
+      options:
+        - Pequeno (< 1 dia)
+        - Médio (2-5 dias)
+        - Grande (mais de 1 semana)
+        - Não sei
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribuição
+      options:
+        - label: Estou disposto a implementar esta feature em um PR
+        - label: Preciso de discussão antes de implementar

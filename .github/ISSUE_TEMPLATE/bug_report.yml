@@ -1,0 +1,85 @@
+name: 🐛 Bug report
+description: Reportar um comportamento inesperado do Delivery Hub
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reportar! Preencha os campos abaixo pra ajudar a diagnosticar rápido.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: O que aconteceu?
+      description: Descreva o bug de forma clara e objetiva
+      placeholder: Ao clicar em "Fazer pedido" no checkout, o botão fica travado em "Enviando…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Como reproduzir?
+      description: Passos numerados que reproduzem o bug
+      placeholder: |
+        1. Adicionar 2 itens ao carrinho
+        2. Ir para checkout
+        3. Preencher todos os campos
+        4. Clicar em "Fazer pedido"
+        5. Botão fica travado
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento esperado
+      placeholder: O botão deveria abrir o WhatsApp com o pedido formatado
+
+  - type: input
+    id: wp-version
+    attributes:
+      label: Versão do WordPress
+      placeholder: "6.7.1"
+    validations:
+      required: true
+
+  - type: input
+    id: php-version
+    attributes:
+      label: Versão do PHP
+      placeholder: "8.2.4"
+    validations:
+      required: true
+
+  - type: input
+    id: theme-version
+    attributes:
+      label: Versão do Delivery Hub
+      placeholder: "0.2.0"
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Navegador
+      placeholder: "Chrome 128 · macOS · desktop"
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Erros no console do navegador
+      description: Abra o DevTools (F12) → Console → cole erros aqui
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Verificações
+      options:
+        - label: Verifiquei que não existe issue aberta pra este bug
+          required: true
+        - label: Testei com o tema padrão (Twenty Twenty-Five) pra confirmar que é bug do Delivery Hub
+          required: false
