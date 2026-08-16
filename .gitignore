@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+._*
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Node (para futuros builds)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# PHP
+vendor/
+
+# Locais
+*.log
+.env
+.env.local
