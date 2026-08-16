@@ -128,47 +128,53 @@ delivery-hub/
 - ✅ Skeleton loader
 - ✅ Persistência localStorage (carrinho, checkout, dados do cliente)
 
-## Roadmap — próximas fases
+## Roadmap — fases entregues
 
-### 🔨 Fase 5 — Entregadores
-- CPT `dh_delivery` (cadastro de entregadores)
-- Atribuição obrigatória ao mudar pra "Em rota"
+### ✅ Fase 5 — Entregadores
+- CPT `dh_delivery` (cadastro completo com foto, telefone com máscara, ativo/inativo)
+- Modal de escolha ao arrastar pra "Em rota"
 - Contagem por entregador no header do Kanban
-- Nome do entregador visível no tracking do cliente
+- Nome + foto visíveis no tracking do cliente
+- Audit log grava atribuição
 
-### 🔨 Fase 6 — Notificações e alertas
-- Notification API (permissão + push desktop)
-- 3 sons distintos (novo, atraso, cancelado)
-- Badge no title da aba (ex: `(3) PDV`)
-- Favicon com dot vermelho quando tem pendências
+### ✅ Fase 6 — Notificações e alertas
+- Notification API com permissão explícita
+- 3 sons distintos (novo agudo, atraso grave, confirmado suave)
+- Badge no title da aba piscando `(N) PDV`
+- Favicon dinâmico gerado via canvas com dot vermelho
+- Alertas: pedido novo, atraso SLA, cliente confirmou
 
-### 🔨 Fase 7 — Impressão térmica
-- Rota `/print/order/{id}` com CSS 80mm
-- Botão imprimir por card
-- Auto-print opcional ao cair pedido novo
-- Cupom da cozinha (só itens + obs, sem preço)
-- Etiqueta pra sacola (fita 40mm)
+### ✅ Fase 7 — Impressão térmica
+- Rota `/print/{id}/{tipo}` — cliente, cozinha, etiqueta
+- CSS 80mm otimizado com preview + botão imprimir
+- Toggle "Auto-imprimir" persistido no device
+- Ao cair pedido novo, abre popups de Cliente + Cozinha
+- Botões no popover do card + na sidebar de edição do pedido
 
-### 🔨 Fase 8 — Modo Cozinha (TV)
-- Rota `/pdv/kitchen` fullscreen sem admin bar
-- 2 colunas (Preparando + Pronto)
-- Cards gigantes, fonte 20px+
-- Auto-refresh 10s
+### ✅ Fase 8 — Modo Cozinha (TV fullscreen)
+- Rota `/wp-admin/admin.php?page=dh-kitchen&fs=1`
+- 3 colunas gigantes (Novo, Preparando, Pronto) fundo escuro pra TV
+- Cards com fonte 20px+, timer live, obs em amarelo destacado
+- Botão grande de avanço por card (INICIAR PREPARO / PRONTO)
+- Relógio no header + auto-refresh 10s
+- Fullscreen esconde admin bar
 
-### 🔨 Fase 9 — Insights, comparativos e fechamento
-- Página "Relatórios" no menu admin
-- Gráfico faturamento por hora (canvas)
-- Comparativo Hoje × Ontem × Média 7d (delta %)
-- Alerta de pico
-- Breakdown de pagamento (PIX/Dinheiro/Cartão)
-- Export CSV/PDF do dia
-- Fechamento de caixa
+### ✅ Fase 9 — Insights, comparativos e fechamento
+- Página **Relatórios** no menu lateral
+- 4 cards comparativos com delta % vs. ontem (faturamento, pedidos, ticket, atraso)
+- Gráfico de barras faturamento por hora (canvas puro)
+- Breakdown de pagamento com barras percentuais
+- Top 8 itens mais vendidos ranqueados
+- Fechamento de caixa (dinheiro esperado vs contado)
+- Export CSV do dia com BOM UTF-8 pra Excel
 
-### 🔨 Fase 10 — Multi-atendente e roles
+### ✅ Fase 10 — Multi-atendente e roles
 - 3 roles WP: `dh_cook`, `dh_attendant`, `dh_manager`
-- Colunas visíveis por role
-- Log de quem moveu cada card (já grava user_id)
-- Restrição de ações por role
+- **Cozinha**: só vê Modo Cozinha, redirect automático no login
+- **Atendente**: PDV + pedidos + entregadores + clientes (sem cardápio/settings/relatórios)
+- **Gerente**: tudo exceto settings core do WP
+- Log de quem fez cada ação já vinha do audit log (`user_id`)
+- Admin notice em Config. da Loja pra criar novos usuários
 
 ### 💡 Ideias futuras (não priorizadas)
 - Pagamento PIX integrado (Mercado Pago / Gerencianet)

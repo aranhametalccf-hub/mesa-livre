@@ -69,6 +69,8 @@ $type_labels = [ 'delivery' => 'Entrega', 'pickup' => 'Retirada', 'dinein' => 'C
 $wa_store = $s['whatsapp']
 	? 'https://wa.me/' . preg_replace( '/\D/', '', $s['whatsapp'] ) . '?text=' . rawurlencode( 'Olá! Sobre o pedido #' . $order_id )
 	: '';
+
+$deliv = dh_order_delivery( $order_id );
 ?>
 
 <div class="dh-mo-wrap" x-data="orderTracking(<?php echo $order_id; ?>)" x-init="startPoll()">
@@ -198,6 +200,29 @@ $wa_store = $s['whatsapp']
 					</div>
 				</div>
 			</div>
+
+			<!-- Entregador -->
+			<?php if ( $deliv && in_array( $order->post_status, [ 'dh-rota', 'dh-entregue' ], true ) ) : ?>
+			<div class="dh-tk-card">
+				<div class="dh-tk-card-head">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h4l3 6h-3"/><path d="M9 17.5V13.5a2 2 0 0 1 2-2h4l3 6"/><path d="M9 17.5H5.5"/></svg>
+					<h3>Entregador</h3>
+				</div>
+				<div class="dh-tk-card-body dh-tk-driver">
+					<?php if ( $deliv['photo'] ) : ?>
+						<img src="<?php echo esc_url( $deliv['photo'] ); ?>" alt="">
+					<?php else : ?>
+						<span class="dh-tk-driver-initial"><?php echo esc_html( mb_substr( $deliv['name'], 0, 1 ) ); ?></span>
+					<?php endif; ?>
+					<div>
+						<strong><?php echo esc_html( $deliv['name'] ); ?></strong>
+						<?php if ( $order->post_status === 'dh-rota' ) : ?>
+							<small>A caminho do seu endereço</small>
+						<?php endif; ?>
+					</div>
+				</div>
+			</div>
+			<?php endif; ?>
 
 			<!-- Pagamento -->
 			<?php if ( ! empty( $cust['payment'] ) ) : ?>

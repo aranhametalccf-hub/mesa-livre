@@ -40,6 +40,19 @@ add_action( 'wp_enqueue_scripts', function () {
 add_action( 'admin_enqueue_scripts', function ( $hook ) {
 	wp_enqueue_style( 'dh-admin', DH_URI . '/assets/css/admin.css', [], DH_VERSION );
 
+	// Adiciona classe genérica no body pra páginas do tema (fallback caso
+	// body-class específica do WP não bata em alguma tela custom)
+	$dh_screens = [ 'dh-pdv', 'dh-settings' ];
+	$dh_types   = [ 'dh_order', 'dh_delivery', 'dh_customer', 'menu_item' ];
+	add_filter( 'admin_body_class', function ( $classes ) use ( $hook, $dh_screens, $dh_types ) {
+		global $typenow;
+		if ( in_array( $typenow ?? '', $dh_types, true ) ) $classes .= ' dh-page';
+		foreach ( $dh_screens as $slug ) {
+			if ( strpos( $hook, $slug ) !== false ) { $classes .= ' dh-page'; break; }
+		}
+		return $classes;
+	} );
+
 	// Kanban page carrega libs extras
 	if ( strpos( $hook, 'dh-pdv' ) !== false ) {
 		wp_enqueue_script( 'sortablejs', 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js', [], '1.15.2', true );

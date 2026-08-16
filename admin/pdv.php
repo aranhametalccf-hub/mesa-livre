@@ -65,6 +65,7 @@ function dh_pdv_page() {
 	}
 
 	$m = dh_daily_metrics( $today ); // métricas SEMPRE do dia atual (independente do filtro)
+	$active_deliveries = dh_get_active_deliveries();
 
 	$stage_labels = [
 		'accept'   => [ 'Aceite',    'sla_accept'   ],
@@ -82,6 +83,17 @@ function dh_pdv_page() {
 				<h1>PDV — Pedidos do dia</h1>
 				<small><?php echo esc_html( date_i18n( 'l, d \d\e F', current_time( 'timestamp' ) ) ); ?></small>
 			</div>
+
+			<button type="button" id="dh-notify-btn" class="dh-notify-btn" title="Ativar notificações do navegador" hidden>
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+				<span>Ativar notificações</span>
+			</button>
+
+			<label class="dh-autoprint-toggle" title="Ao cair pedido novo, abre a impressão automaticamente">
+				<input type="checkbox" id="dh-autoprint">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+				<span>Auto-imprimir</span>
+			</label>
 
 			<div class="dh-store-toggle" data-open="<?php echo $store['open'] ? '1' : '0'; ?>">
 				<div class="dh-store-status is-<?php echo $store['open'] ? 'open' : 'closed'; ?>">
@@ -197,6 +209,45 @@ function dh_pdv_page() {
 			Nenhum pedido corresponde aos filtros. <button type="button" id="dh-pdv-reset-filters" class="button-link">Limpar filtros</button>
 		</div>
 
+		<?php if ( ! empty( $active_deliveries ) ) :
+			$route_orders = $orders_by_status['dh-rota'] ?? [];
+			$counts = [];
+			foreach ( $route_orders as $o ) {
+				$did = intval( get_post_meta( $o->ID, '_dh_delivery_id', true ) );
+				if ( $did ) $counts[ $did ] = ( $counts[ $did ] ?? 0 ) + 1;
+			}
+			$in_route_total = array_sum( $counts );
+			?>
+			<div class="dh-drivers-bar">
+				<div class="dh-drivers-head">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h4l3 6h-3"/><path d="M9 17.5V13.5a2 2 0 0 1 2-2h4l3 6"/><path d="M9 17.5H5.5"/></svg>
+					<span class="dh-drivers-title">Entregadores</span>
+					<em class="dh-drivers-count"><?php echo count( $active_deliveries ); ?> ativos · <?php echo intval( $in_route_total ); ?> em rota</em>
+				</div>
+				<div class="dh-drivers-list">
+					<?php foreach ( $active_deliveries as $d ) :
+						$info = dh_delivery_info( $d->ID );
+						$n = $counts[ $d->ID ] ?? 0;
+						?>
+						<div class="dh-driver-pill <?php echo $n > 0 ? 'has-orders' : ''; ?>" title="<?php echo esc_attr( $info['name'] . ' — ' . $n . ' em rota' ); ?>">
+							<?php if ( $info['photo'] ) : ?>
+								<img src="<?php echo esc_url( $info['photo'] ); ?>" alt="">
+							<?php else : ?>
+								<span class="dh-driver-initial"><?php echo esc_html( mb_substr( $info['name'], 0, 1 ) ); ?></span>
+							<?php endif; ?>
+							<span class="dh-driver-name"><?php echo esc_html( $info['name'] ); ?></span>
+							<?php if ( $n > 0 ) : ?>
+								<em class="dh-driver-badge"><?php echo $n; ?></em>
+							<?php else : ?>
+								<span class="dh-driver-idle" title="Livre">livre</span>
+							<?php endif; ?>
+						</div>
+					<?php endforeach; ?>
+				</div>
+				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=dh_delivery' ) ); ?>" class="dh-drivers-manage">Gerenciar →</a>
+			</div>
+		<?php endif; ?>
+
 		<div class="dh-kanban">
 			<?php foreach ( $statuses as $slug => $cfg ) : ?>
 				<div class="dh-kanban-col" data-status="<?php echo esc_attr( $slug ); ?>">
@@ -249,6 +300,18 @@ function dh_pdv_page() {
 									<?php endif; ?>
 								</ul>
 
+								<?php $deliv = dh_order_delivery( $order->ID ); ?>
+								<?php if ( $deliv && in_array( $slug, [ 'dh-rota', 'dh-entregue' ], true ) ) : ?>
+									<div class="dh-card-driver">
+										<?php if ( $deliv['photo'] ) : ?>
+											<img src="<?php echo esc_url( $deliv['photo'] ); ?>" alt="">
+										<?php else : ?>
+											<span class="dh-driver-initial"><?php echo esc_html( mb_substr( $deliv['name'], 0, 1 ) ); ?></span>
+										<?php endif; ?>
+										<span><strong><?php echo esc_html( $deliv['name'] ); ?></strong></span>
+									</div>
+								<?php endif; ?>
+
 								<?php if ( $has_timer ) : ?>
 									<div class="dh-card-timer">
 										<div class="dh-timer-row">
@@ -288,6 +351,12 @@ function dh_pdv_page() {
 			Visualizando <strong><?php echo esc_html( $period_label ); ?></strong>.
 			Arraste os cards entre colunas pra mudar o status. Timer atualiza a cada segundo · recarrega a cada 15s se cair pedido novo.
 		</p>
+
+		<?php if ( ! empty( $active_deliveries ) ) : ?>
+			<script type="application/json" id="dh-active-deliveries">
+			<?php echo wp_json_encode( array_map( 'dh_delivery_info', wp_list_pluck( $active_deliveries, 'ID' ) ) ); ?>
+			</script>
+		<?php endif; ?>
 	</div>
 	<?php
 }

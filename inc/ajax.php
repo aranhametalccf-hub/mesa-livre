@@ -204,13 +204,34 @@ add_action( 'wp_ajax_dh_reorder', function () {
  */
 add_action( 'wp_ajax_dh_count_new', function () {
 	check_ajax_referer( 'dh_pdv', 'nonce' );
-	$c = count( get_posts( [
+
+	$novo = get_posts( [
 		'post_type'      => 'dh_order',
 		'post_status'    => 'dh-novo',
-		'posts_per_page' => 100,
+		'posts_per_page' => 50,
 		'fields'         => 'ids',
-	] ) );
-	wp_send_json_success( [ 'count' => $c ] );
+	] );
+
+	// Métricas de atraso e último confirmado hoje
+	$m = dh_daily_metrics( wp_date( 'Y-m-d', time() ) );
+
+	// Último pedido confirmado pelo cliente (via audit log)
+	global $wpdb;
+	$last_confirmed = intval( $wpdb->get_var(
+		"SELECT p.ID FROM {$wpdb->posts} p
+		 INNER JOIN {$wpdb->postmeta} m ON p.ID = m.post_id
+		 WHERE p.post_type = 'dh_order'
+		 AND m.meta_key = '_dh_change_log'
+		 AND m.meta_value LIKE '%confirmed_by_customer%'
+		 ORDER BY p.ID DESC LIMIT 1"
+	) );
+
+	wp_send_json_success( [
+		'count'          => count( $novo ),
+		'novo_ids'       => array_map( 'intval', $novo ),
+		'overdue'        => intval( $m['overdue'] ?? 0 ),
+		'last_confirmed' => $last_confirmed,
+	] );
 } );
 
 /**

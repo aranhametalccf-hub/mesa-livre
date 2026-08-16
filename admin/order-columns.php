@@ -686,6 +686,7 @@ function dh_audit_action_label( $action ) {
 		'customer_changed'      => 'Cliente',
 		'confirmed_by_customer' => 'Confirmado pelo cliente',
 		'reordered_from'        => 'Duplicado',
+		'delivery_assigned'     => 'Entregador',
 	];
 	return $map[ $action ] ?? $action;
 }
@@ -795,6 +796,17 @@ function dh_mb_order_actions( $post ) {
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
 				Reenviar pedido pro WhatsApp da loja
 			</a>
+		</div>
+
+		<div class="dh-actions-block">
+			<label class="dh-actions-label">Imprimir</label>
+			<div class="dh-actions-row">
+				<a href="<?php echo esc_url( home_url( '/print/' . $post->ID . '/cliente' ) ); ?>" target="_blank" class="dh-btn-mini">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+					Cliente
+				</a>
+				<a href="<?php echo esc_url( home_url( '/print/' . $post->ID . '/cozinha' ) ); ?>" target="_blank" class="dh-btn-mini">Cozinha</a>
+				<a href="<?php echo esc_url( home_url( '/print/' . $post->ID . '/etiqueta' ) ); ?>" target="_blank" class="dh-btn-mini">Etiqueta</a>
 		</div>
 
 	</div>

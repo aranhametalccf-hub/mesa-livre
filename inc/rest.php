@@ -105,6 +105,7 @@ add_action( 'rest_api_init', function () {
 				'delivery_fee' => (float) get_post_meta( $id, '_dh_delivery_fee', true ),
 				'total'        => (float) get_post_meta( $id, '_dh_total', true ),
 				'total_fmt'    => dh_money( get_post_meta( $id, '_dh_total', true ) ),
+				'delivery'     => dh_order_delivery( $id ),
 			];
 		},
 	] );
