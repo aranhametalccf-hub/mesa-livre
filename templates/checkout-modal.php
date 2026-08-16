@@ -124,6 +124,39 @@
 						<input type="text" :value="checkout.city + (checkout.state ? ' — ' + checkout.state : '')" readonly>
 					</div>
 				</div>
+
+				<!-- Status da área de entrega -->
+				<div class="dh-area-status dh-area-loading" x-show="areaStatus === 'loading'" x-cloak>
+					<span class="dh-area-spin"></span>
+					Verificando se entregamos nessa região…
+				</div>
+				<div class="dh-area-status dh-area-ok" x-show="areaStatus === 'ok' && areaInfo" x-cloak>
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+					<div>
+						<strong x-text="'Entregamos em ' + (areaInfo.area?.name || 'sua região')"></strong>
+						<small>
+							Taxa <span x-text="areaInfo.fee_fmt"></span>
+							<template x-if="areaInfo.eta_min">
+								<span> · chega em ~<span x-text="areaInfo.eta_min"></span>min</span>
+							</template>
+						</small>
+					</div>
+				</div>
+				<div class="dh-area-status dh-area-fallback" x-show="areaStatus === 'fallback' && areaInfo" x-cloak>
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+					<div>
+						<strong>Vamos confirmar por WhatsApp</strong>
+						<small x-text="areaInfo.message"></small>
+					</div>
+				</div>
+				<div class="dh-area-status dh-area-rejected" x-show="areaStatus === 'rejected' && areaInfo" x-cloak>
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+					<div>
+						<strong x-text="areaInfo.message"></strong>
+						<small>Confira o CEP ou escolha outra forma de retirar.</small>
+					</div>
+					<button type="button" class="dh-area-pickup-btn" x-show="areaInfo.suggest_pickup" @click="switchToPickup()">Retirar no balcão</button>
+				</div>
 					</div>
 				</template>
 			</section>
@@ -158,13 +191,16 @@
 
 			<section class="dh-checkout-summary">
 				<div><span>Subtotal</span><strong x-text="money(cartTotal)"></strong></div>
-				<div x-show="checkout.type === 'delivery' && DH.store.delivery_fee > 0">
+				<div x-show="checkout.type === 'delivery' && effectiveDeliveryFee > 0">
 					<span>Taxa de entrega</span>
-					<strong x-text="money(DH.store.delivery_fee)"></strong>
+					<strong x-text="money(effectiveDeliveryFee)"></strong>
 				</div>
 				<div class="dh-total">
 					<span>Total</span>
 					<strong x-text="money(checkoutTotal)"></strong>
+				</div>
+				<div class="dh-min-order-warn" x-show="belowMinOrder" x-cloak>
+					Pedido mínimo: <strong x-text="money(effectiveMinOrder)"></strong>. Adicione mais itens pra continuar.
 				</div>
 			</section>
 		</div>

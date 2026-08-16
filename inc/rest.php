@@ -147,6 +147,25 @@ add_action( 'rest_api_init', function () {
 		},
 	] );
 
+	register_rest_route( 'dh/v1', '/delivery-check', [
+		'methods'  => 'GET',
+		'permission_callback' => '__return_true',
+		'callback' => function ( $req ) {
+			$cep = dh_normalize_cep( $req->get_param( 'cep' ) );
+			$neighborhood = sanitize_text_field( $req->get_param( 'neighborhood' ) ?: '' );
+
+			$res = dh_check_delivery_cep( $cep, $neighborhood );
+
+			if ( $res['fee'] !== null ) {
+				$res['fee_fmt'] = dh_money( $res['fee'] );
+			}
+			if ( $res['min_order'] !== null && $res['min_order'] > 0 ) {
+				$res['min_order_fmt'] = dh_money( $res['min_order'] );
+			}
+			return $res;
+		},
+	] );
+
 	register_rest_route( 'dh/v1', '/menu-item/(?P<id>\d+)', [
 		'methods'  => 'GET',
 		'permission_callback' => '__return_true',

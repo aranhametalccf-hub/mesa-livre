@@ -83,10 +83,27 @@ function dh_place_order() {
 	}
 
 	$s = dh_get_settings();
-	$delivery_fee = ( $type === 'delivery' ) ? (float) $s['delivery_fee'] : 0;
 
-	if ( $subtotal < (float) $s['min_order'] ) {
-		wp_send_json_error( [ 'message' => 'Pedido mínimo: ' . dh_money( $s['min_order'] ) ], 400 );
+	// Determina taxa e pedido mínimo — server é fonte da verdade (revalida área)
+	$delivery_fee = 0;
+	$applied_min  = (float) $s['min_order'];
+	$area_id_used = null;
+
+	if ( $type === 'delivery' ) {
+		$area_check = dh_check_delivery_cep( $cep, $neighborhood );
+		if ( ! $area_check['allowed'] ) {
+			wp_send_json_error( [
+				'message' => $area_check['message'] ?: 'Não entregamos nessa região.',
+				'reason'  => 'area_rejected',
+			], 400 );
+		}
+		$delivery_fee = (float) ( $area_check['fee'] ?? $s['delivery_fee'] );
+		$applied_min  = (float) ( $area_check['min_order'] ?? $s['min_order'] );
+		$area_id_used = $area_check['area']['id'] ?? null;
+	}
+
+	if ( $subtotal < $applied_min ) {
+		wp_send_json_error( [ 'message' => 'Pedido mínimo: ' . dh_money( $applied_min ) ], 400 );
 	}
 
 	$total = $subtotal + $delivery_fee;
@@ -131,6 +148,7 @@ function dh_place_order() {
 	update_post_meta( $order_id, '_dh_subtotal', $subtotal );
 	update_post_meta( $order_id, '_dh_delivery_fee', $delivery_fee );
 	update_post_meta( $order_id, '_dh_total', $total );
+	if ( $area_id_used ) update_post_meta( $order_id, '_dh_delivery_area_id', $area_id_used );
 
 	$wa_url = dh_build_whatsapp_url( $order_id );
 

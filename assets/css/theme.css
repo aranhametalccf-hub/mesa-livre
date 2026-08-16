@@ -566,6 +566,57 @@ button { font-family: inherit; cursor: pointer; }
 .dh-type-picker strong { display: block; font-size: 14px; }
 .dh-type-picker small { color: var(--dh-muted); font-size: 12px; }
 
+/* --------- Área de entrega (status card no checkout) --------- */
+.dh-area-status {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 14px;
+	border-radius: 10px;
+	margin-top: 14px;
+	font-size: 13px;
+	line-height: 1.4;
+}
+.dh-area-status strong { display: block; font-size: 14px; }
+.dh-area-status small  { display: block; opacity: .8; font-size: 12px; margin-top: 2px; }
+.dh-area-status svg { flex-shrink: 0; }
+.dh-area-status > div { flex: 1; min-width: 0; }
+
+.dh-area-loading { background: #f9fafb; color: var(--dh-muted); }
+.dh-area-spin { width: 14px; height: 14px; border: 2px solid #d1d5db; border-top-color: var(--dh-muted); border-radius: 50%; animation: dh-area-spin 0.7s linear infinite; }
+@keyframes dh-area-spin { to { transform: rotate(360deg); } }
+
+.dh-area-ok       { background: color-mix(in srgb, var(--dh-success) 10%, white); color: #065f46; }
+.dh-area-fallback { background: color-mix(in srgb, var(--dh-warning) 12%, white); color: #78350f; }
+.dh-area-rejected {
+	background: color-mix(in srgb, var(--dh-danger) 10%, white);
+	color: #991b1b;
+	flex-wrap: wrap;
+}
+.dh-area-pickup-btn {
+	background: white;
+	border: 1px solid #b91c1c;
+	color: #991b1b;
+	font-weight: 700;
+	font-size: 12px;
+	padding: 8px 14px;
+	border-radius: 6px;
+	cursor: pointer;
+	margin-left: auto;
+	transition: background .15s, color .15s;
+}
+.dh-area-pickup-btn:hover { background: #b91c1c; color: white; }
+
+.dh-min-order-warn {
+	margin-top: 8px;
+	padding: 8px 12px;
+	background: #fef3c7;
+	border-radius: 6px;
+	color: #78350f;
+	font-size: 12px;
+	line-height: 1.4;
+}
+
 /* --------- CEP autocomplete --------- */
 .dh-cep-row {
 	display: flex;

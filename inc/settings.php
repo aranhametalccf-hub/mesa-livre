@@ -49,6 +49,8 @@ function dh_default_settings() {
 		'sla_pickup'        => 15,
 		'hours_by_day'      => [],
 		'hours_exceptions'  => [],
+		'delivery_areas'    => [],
+		'delivery_areas_config' => [ 'fallback_action' => 'block', 'suggest_pickup' => 1 ],
 	];
 }
 
@@ -164,6 +166,42 @@ function dh_settings_page() {
 			<h2 style="margin-top:30px">Exceções (feriados e datas especiais)</h2>
 			<p class="description">Fechar em um dia específico ou aplicar horário diferente (ex: Natal fechado, 31/12 até 20h).</p>
 			<div class="dh-exceptions-editor" data-exc='<?php echo esc_attr( wp_json_encode( dh_get_hours_exceptions() ) ); ?>'></div>
+
+			<h2 style="margin-top:40px">Áreas de entrega</h2>
+			<p class="description">
+				Defina até onde você entrega, com taxa e tempo estimado diferenciados por região.
+				<strong>Sem áreas cadastradas → aceita qualquer CEP com a taxa global.</strong>
+				A primeira área que bater com o CEP do cliente é aplicada (ordem = prioridade).
+			</p>
+			<div class="dh-areas-editor" data-areas='<?php echo esc_attr( wp_json_encode( dh_get_delivery_areas( false ) ) ); ?>'></div>
+
+			<table class="form-table" style="margin-top:10px">
+				<tr>
+					<th><label>Comportamento fora da área</label></th>
+					<td>
+						<label>
+							<input type="radio" name="dh_settings[delivery_areas_config][fallback_action]" value="block"
+								<?php checked( dh_get_delivery_areas_config()['fallback_action'], 'block' ); ?>>
+							Bloquear pedido (recomendado)
+						</label><br>
+						<label>
+							<input type="radio" name="dh_settings[delivery_areas_config][fallback_action]" value="allow_with_default_fee"
+								<?php checked( dh_get_delivery_areas_config()['fallback_action'], 'allow_with_default_fee' ); ?>>
+							Aceitar com taxa global e confirmar por WhatsApp
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th><label>Sugerir retirada</label></th>
+					<td>
+						<label>
+							<input type="checkbox" name="dh_settings[delivery_areas_config][suggest_pickup]" value="1"
+								<?php checked( dh_get_delivery_areas_config()['suggest_pickup'], 1 ); ?>>
+							Oferecer "Retirar no balcão" quando fora da área
+						</label>
+					</td>
+				</tr>
+			</table>
 
 			<h2 style="margin-top:40px">Metas de tempo (SLA)</h2>
 			<p class="description">
@@ -308,7 +346,113 @@ function dh_settings_page() {
 			render();
 		}
 
-		document.addEventListener('DOMContentLoaded', () => { initHours(); initExceptions(); });
+		function initAreas() {
+			const root = document.querySelector('.dh-areas-editor');
+			if (!root) return;
+			let data = [];
+			try { data = JSON.parse(root.dataset.areas) || []; } catch (e) {}
+
+			function render() {
+				root.innerHTML = '';
+				if (data.length === 0) {
+					const empty = document.createElement('p');
+					empty.className = 'description';
+					empty.style.padding = '12px';
+					empty.textContent = 'Nenhuma área cadastrada. Sem áreas, entregamos em qualquer CEP com a taxa global.';
+					root.appendChild(empty);
+				}
+				data.forEach((area, i) => {
+					const card = document.createElement('div');
+					card.className = 'dh-area-card';
+					const type = area.match_type || 'cep_range';
+					card.innerHTML = `
+						<header>
+							<label class="dh-area-active">
+								<input type="checkbox" name="dh_settings[delivery_areas][${i}][active]" value="1" ${area.active !== false ? 'checked' : ''}>
+								Ativa
+							</label>
+							<input type="hidden" name="dh_settings[delivery_areas][${i}][id]" value="${area.id || i+1}">
+							<input type="text" placeholder="Nome da área (ex: Centro, Alphaville)"
+								name="dh_settings[delivery_areas][${i}][name]"
+								value="${escape(area.name || '')}"
+								class="dh-area-name">
+							<button type="button" class="button-link dh-area-remove" title="Remover">×</button>
+						</header>
+
+						<div class="dh-area-row">
+							<label>Critério
+								<select name="dh_settings[delivery_areas][${i}][match_type]" class="dh-area-type">
+									<option value="cep_range" ${type==='cep_range'?'selected':''}>Faixa de CEP</option>
+									<option value="cep_list" ${type==='cep_list'?'selected':''}>Lista de CEPs</option>
+									<option value="neighborhoods" ${type==='neighborhoods'?'selected':''}>Bairros</option>
+								</select>
+							</label>
+
+							<div class="dh-area-criteria dh-crit-cep_range" ${type==='cep_range'?'':'hidden'}>
+								<label>CEP inicial
+									<input type="text" name="dh_settings[delivery_areas][${i}][cep_from]" value="${formatCep(area.cep_from||'')}" placeholder="01000-000">
+								</label>
+								<label>CEP final
+									<input type="text" name="dh_settings[delivery_areas][${i}][cep_to]" value="${formatCep(area.cep_to||'')}" placeholder="01099-999">
+								</label>
+							</div>
+
+							<div class="dh-area-criteria dh-crit-cep_list" ${type==='cep_list'?'':'hidden'}>
+								<label>CEPs (separados por vírgula ou linha)
+									<textarea name="dh_settings[delivery_areas][${i}][ceps]" rows="2" placeholder="01310-100, 01310-200, ...">${(area.ceps||[]).map(formatCep).join(', ')}</textarea>
+								</label>
+							</div>
+
+							<div class="dh-area-criteria dh-crit-neighborhoods" ${type==='neighborhoods'?'':'hidden'}>
+								<label>Bairros (separados por vírgula)
+									<textarea name="dh_settings[delivery_areas][${i}][neighborhoods]" rows="2" placeholder="Centro, Sé, Bela Vista">${(area.neighborhoods||[]).join(', ')}</textarea>
+								</label>
+							</div>
+						</div>
+
+						<div class="dh-area-row dh-area-money">
+							<label>Taxa (R$)
+								<input type="number" step="0.01" min="0" name="dh_settings[delivery_areas][${i}][fee]" value="${area.fee||0}">
+							</label>
+							<label>Tempo estimado (min, opcional)
+								<input type="number" min="0" name="dh_settings[delivery_areas][${i}][eta_min]" value="${area.eta_min||''}" placeholder="30">
+							</label>
+							<label>Pedido mínimo (R$, opcional)
+								<input type="number" step="0.01" min="0" name="dh_settings[delivery_areas][${i}][min_order]" value="${area.min_order||''}" placeholder="herda global">
+							</label>
+						</div>
+					`;
+					// Bindings
+					card.querySelector('.dh-area-remove').addEventListener('click', () => {
+						if (!confirm('Remover a área "' + (area.name || 'sem nome') + '"?')) return;
+						data.splice(i, 1); render();
+					});
+					card.querySelector('.dh-area-type').addEventListener('change', (e) => {
+						card.querySelectorAll('.dh-area-criteria').forEach(el => el.hidden = true);
+						card.querySelector('.dh-crit-' + e.target.value).hidden = false;
+					});
+					root.appendChild(card);
+				});
+
+				const addBtn = document.createElement('button');
+				addBtn.type = 'button';
+				addBtn.className = 'button dh-area-add';
+				addBtn.textContent = '+ Adicionar área';
+				addBtn.addEventListener('click', () => {
+					data.push({ id: 0, name: '', match_type: 'cep_range', fee: 0, active: true });
+					render();
+				});
+				root.appendChild(addBtn);
+			}
+			function escape(s) { return String(s).replace(/"/g, '&quot;'); }
+			function formatCep(c) {
+				const d = String(c || '').replace(/\D/g,'');
+				return d.length === 8 ? d.slice(0,5) + '-' + d.slice(5) : d;
+			}
+			render();
+		}
+
+		document.addEventListener('DOMContentLoaded', () => { initHours(); initExceptions(); initAreas(); });
 	})();
 	</script>
 

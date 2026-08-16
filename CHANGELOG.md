@@ -5,6 +5,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 ## [Unreleased]
 
 ### Adicionado
+- **Áreas de entrega com taxa dinâmica** (RFC-001) — loja cadastra N áreas por faixa de CEP, lista de CEPs ou bairros. Taxa, ETA e pedido mínimo por área. Fallback configurável (bloquear ou aceitar com taxa global). Sugestão automática de "Retirar no balcão" quando fora da área. Endpoint REST `/wp-json/dh/v1/delivery-check` com cache 24h. Server revalida antes de aceitar pedido — cliente não pode forjar taxa
 - Padrão de contribuição pública (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, templates de PR e Issue)
 - Licença PolyForm Noncommercial 1.0.0
 

@@ -54,6 +54,7 @@ O Delivery Hub existe pra dar a esse dono de restaurante:
 - **PDV Kanban** com 6 status (Novo → Preparando → Pronto → Em rota → Entregue) + drag-drop entre colunas
 - **Timer live por card** com metas configuráveis (SLA). Cards ficam laranja/vermelhos quando estouram
 - **Modo Cozinha** fullscreen otimizado pra TV/tablet montado na cozinha
+- **Áreas de entrega** por faixa de CEP, lista de CEPs ou bairros — com taxa, ETA e pedido mínimo diferentes por região
 - **Loja aberta/fechada automática** por horário do dia + exceções (feriados)
 - **Pausas temporárias** (15/30/60min ou até fim do dia)
 - **Busca em tempo real** por nome, telefone, número do pedido ou item
@@ -239,6 +240,7 @@ delivery-hub/
 - [x] Autocomplete de endereço via ViaCEP
 - [x] Login por telefone com endereços salvos e histórico
 - [x] PDV Kanban com drag-drop, timer live, SLAs configuráveis
+- [x] Áreas de entrega com taxa dinâmica por região (CEP/bairro)
 - [x] Loja aberta/fechada com horário automático e exceções
 - [x] Busca, filtros, ordenação e modo compacto
 - [x] Editor completo do pedido com audit log

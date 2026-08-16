@@ -49,6 +49,9 @@ window.deliveryApp = function () {
 		customerFound: false,
 		lastLookupPhone: '',
 		successTracking: '',
+		areaStatus: 'idle',   // idle | loading | ok | rejected | fallback
+		areaInfo: null,
+		lastCheckedCep: '',
 
 		init() {
 			// Se algum tipo padrão não estiver disponível, escolhe o primeiro habilitado
@@ -163,16 +166,47 @@ window.deliveryApp = function () {
 				this.checkout.state = data.uf || '';
 				this.checkout.complement = this.checkout.complement || data.complemento || '';
 				this.cepStatus = 'ok';
-				// Foca no número se rua veio preenchida
 				this.$nextTick(() => {
 					if (this.$refs.numberInput && this.checkout.street) {
 						this.$refs.numberInput.focus();
 					}
 				});
+				this.checkDeliveryArea();
 			} catch (e) {
 				this.cepStatus = 'err';
 				this.cepError = 'Erro na consulta. Verifique sua conexão.';
 			}
+		},
+
+		async checkDeliveryArea() {
+			const cepDigits = this.cepDigits;
+			if (cepDigits.length !== 8) { this.areaStatus = 'idle'; this.areaInfo = null; return; }
+			if (this.checkout.type !== 'delivery') { this.areaStatus = 'idle'; return; }
+
+			const key = cepDigits + '|' + (this.checkout.neighborhood || '');
+			if (key === this.lastCheckedCep) return;
+			this.lastCheckedCep = key;
+
+			this.areaStatus = 'loading';
+			this.areaInfo = null;
+			try {
+				const url = `/delivery/wp-json/dh/v1/delivery-check?cep=${cepDigits}&neighborhood=${encodeURIComponent(this.checkout.neighborhood || '')}`;
+				const res = await fetch(url);
+				const data = await res.json();
+				this.areaInfo = data;
+				if (!data.allowed)                        this.areaStatus = 'rejected';
+				else if (data.reason === 'fallback_allowed') this.areaStatus = 'fallback';
+				else                                       this.areaStatus = 'ok';
+			} catch (e) {
+				console.warn('delivery-check falhou', e);
+				this.areaStatus = 'idle';
+			}
+		},
+
+		switchToPickup() {
+			this.checkout.type = 'pickup';
+			this.areaStatus = 'idle';
+			this.areaInfo = null;
 		},
 
 		get fullAddress() {
@@ -313,9 +347,26 @@ window.deliveryApp = function () {
 			this.cartOpen = true;
 		},
 
+		get effectiveDeliveryFee() {
+			if (this.checkout.type !== 'delivery') return 0;
+			if (this.areaInfo && this.areaInfo.fee !== null && this.areaInfo.fee !== undefined) {
+				return Number(this.areaInfo.fee);
+			}
+			return Number(window.DH?.store?.delivery_fee || 0);
+		},
+
+		get effectiveMinOrder() {
+			if (this.areaInfo && this.areaInfo.min_order) return Number(this.areaInfo.min_order);
+			return Number(window.DH?.store?.min_order || 0);
+		},
+
 		get checkoutTotal() {
-			const fee = (this.checkout.type === 'delivery') ? Number(window.DH?.store?.delivery_fee || 0) : 0;
-			return this.cartTotal + fee;
+			return this.cartTotal + this.effectiveDeliveryFee;
+		},
+
+		get belowMinOrder() {
+			const min = this.effectiveMinOrder;
+			return min > 0 && this.cartTotal < min;
 		},
 
 		get checkoutValid() {
@@ -324,9 +375,12 @@ window.deliveryApp = function () {
 				if (this.cepDigits.length !== 8) return false;
 				if (!this.checkout.street?.trim()) return false;
 				if (!this.checkout.number?.trim()) return false;
+				if (this.areaStatus === 'rejected') return false;
+				if (this.areaStatus === 'loading') return false;
 			}
 			if (this.checkout.type === 'dinein' && !this.checkout.table?.trim()) return false;
 			if (!this.checkout.payment) return false;
+			if (this.belowMinOrder) return false;
 			return true;
 		},
 

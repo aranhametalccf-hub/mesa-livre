@@ -23,6 +23,7 @@ require_once DH_DIR . '/inc/routes.php';
 require_once DH_DIR . '/inc/metrics.php';
 require_once DH_DIR . '/inc/store-hours.php';
 require_once DH_DIR . '/inc/delivery.php';
+require_once DH_DIR . '/inc/delivery-areas.php';
 require_once DH_DIR . '/admin/pdv.php';
 require_once DH_DIR . '/admin/order-columns.php';
 require_once DH_DIR . '/admin/order-page.php';
